@@ -1,0 +1,7 @@
+kubeStateMetrics:
+  image: harry671003/kube-state-metrics-mock:latest
+  replicas: 10
+
+prometheus:
+  image: prom/prometheus:latest
+  clusterId: cluster1

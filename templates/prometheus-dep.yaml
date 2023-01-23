@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  selector:
+    matchLabels:
+      name: prometheus
+  template:    
+    metadata:
+      labels:
+        name: prometheus
+      annotations:
+        checksum/prom-config: {{ include (print $.Template.BasePath "/prometheus-config.yaml") . | sha256sum }}
+    spec:
+      serviceAccountName: prometheus{{ .Values.prometheus.clusterId }}
+      containers:
+      - name: prometheus
+        image: {{ .Values.prometheus.image }}
+        imagePullPolicy: Always
+        args:
+        - --config.file=/etc/config/prometheus-config
+        - --storage.tsdb.retention.time=1h1m
+        - --storage.tsdb.path="data2/
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+          - name: prometheus-config
+            mountPath: /etc/config
+            readOnly: true
+        resources:
+          limits:
+            cpu: 15
+            memory: 60G
+          requests:
+            cpu: 15
+            memory: 60G
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config

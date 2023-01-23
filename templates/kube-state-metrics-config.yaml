@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-state-metrics-config
+data:
+  kube-state-metrics-config: |-
+    # k8s cluster config
+    cluster_config:
+      num_nodes: 50
+      num_namespaces: 10
+      num_deployments_per_namepace: 10
+      num_statefulsets_per_namespace: 10
+      num_pvcs_per_namespace: 100
+      num_replicas_per_deployments: 30
+      num_replicas_per_statefulset: 20
+      num_containers_per_pod: 5

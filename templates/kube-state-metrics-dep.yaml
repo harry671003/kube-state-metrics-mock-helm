@@ -1,0 +1,43 @@
+# harry671003/kube-state-metrics-mock:
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-state-metrics
+spec:
+  replicas: {{ .Values.kubeStateMetrics.replicas }}
+  selector:
+    matchLabels:
+      name: kube-state-metrics
+  template:    
+    metadata:
+      labels:
+        name: kube-state-metrics
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9009'
+    spec:
+      containers:
+      - name: kube-state-metrics
+        image: {{ .Values.kubeStateMetrics.image }}
+        imagePullPolicy: Always
+        args:
+        - /kube_state_metrics
+        - -config_file=/etc/config/kube-state-metrics-config
+        ports:
+        - containerPort: 9009
+        volumeMounts:
+          - name: kube-state-metrics-config
+            mountPath: /etc/config
+            readOnly: true
+        resources:
+          limits:
+            memory: 16G
+          requests:
+            cpu: 4
+            memory: 16G
+      volumes:
+        - name: kube-state-metrics-config
+          configMap:
+            name: kube-state-metrics-config
